@@ -68,4 +68,3 @@ final class AuthorFactory extends ModelFactory
         return Author::class;
     }
 }
-

@@ -19,6 +19,9 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    
+    App\Repository\CommentRepository:
+        tags: ['doctrine.repository_service']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Add more service definitions when explicit configuration is needed
+    # Please note that last definitions always *replace* previous ones

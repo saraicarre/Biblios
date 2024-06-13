@@ -8,6 +8,7 @@ use App\Repository\BookRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\RepositoryProxy;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @extends ModelFactory<Book>
@@ -30,25 +31,15 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 final class BookFactory extends ModelFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     * @todo inject services if required
-     */
     public function __construct()
     {
         parent::__construct();
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
-     *
-     * @todo add your default values here
-     */
     protected function getDefaults(): array
     {
         return [
-            'cover' => self::faker()->imageUrl(330, 500, 'couverture', true),
+            'cover' => $this->createCoverFile(),
             'editedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'isbn' => self::faker()->isbn13(),
             'pageNumber' => self::faker()->randomNumber(),
@@ -61,9 +52,17 @@ final class BookFactory extends ModelFactory
         ];
     }
 
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
-     */
+    protected function createCoverFile(): string
+    {
+        $coverPath = __DIR__ . '/../../public/uploads/covers/';
+        if (!file_exists($coverPath)) {
+            mkdir($coverPath, 0777, true);
+        }
+        $coverFilename = sprintf('%s.jpg', uniqid());
+        copy(__DIR__ . '/../../assets/sample-cover.jpg', $coverPath . $coverFilename);
+        return $coverFilename;
+    }
+
     protected function initialize(): self
     {
         return $this
